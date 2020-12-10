@@ -1,9 +1,7 @@
 package com.example.jpademo1;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +58,24 @@ public class UserController {
             return userRepository.findByName(name).get();
         }
         return null;
+    }
+
+    /**
+    * @Description: 使用QueryByExampleExcutor
+    * @Author: chenyi
+    * @Date: 2020/12/10
+    */
+    @PostMapping(path = "/find-by-first-name")
+    @ResponseBody
+    public List<User> findByFirstName(@RequestParam("firstName") String firstName){
+        User user = new User();
+        user.setName(firstName);
+        ExampleMatcher matcher = ExampleMatcher.matching() //构建对象
+                .withMatcher("name", ExampleMatcher.GenericPropertyMatchers.startsWith()) //姓名采用“开始匹配”的方式查询
+                .withIgnorePaths("focus");
+        //创建实例
+        Example<User> ex = Example.of(user, matcher);
+        return userRepository.findAll(ex);
     }
 
 
