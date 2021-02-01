@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static org.apache.tomcat.jni.Time.sleep;
 
 @Controller
 @RequestMapping(path = "/demo")
@@ -33,7 +36,8 @@ public class UserController {
 
     @GetMapping(path = "/all")
     @ResponseBody
-    public Iterable<User> getAllUser(){
+    public Iterable<User> getAllUser() throws InterruptedException {
+        System.out.println(9/4);
         return userRepository.findAll();
     }
 
@@ -48,13 +52,14 @@ public class UserController {
     @ResponseBody
     public Page<User> getUserByPage(){
         //return userRepository.findAll(PageRequest.of(1,2,Sort.by(Sort.Direction.ASC,"Id")));
-        return userRepository.findAll(PageRequest.of(1,2,Sort.by(Sort.Direction.ASC,"Id")));
+        return userRepository.findAll(PageRequest.of(5,2,Sort.by(Sort.Direction.ASC,"Id")));
     }
 
     @PostMapping(path = "/find-by-name")
     @ResponseBody
-    public User findByName(@RequestParam("name") String name){
+    public User findByName(@RequestParam("name") String name) throws InterruptedException {
         if(userRepository.findByName(name).isPresent()){
+            TimeUnit.SECONDS.sleep(5);
             return userRepository.findByName(name).get();
         }
         return null;
